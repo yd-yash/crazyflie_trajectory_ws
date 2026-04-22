@@ -1,0 +1,45 @@
+cf_controller_node:
+  ros__parameters:
+
+    active_controller: "cascaded_pid"
+    active_trajectory: "figure8"
+    control_frequency: 100.0
+
+    cascaded_pid:
+      # Outer loop — Position PID
+      # Kp=4.0, Kd=4.0 → max accel ~2 m/s^2 at 0.5m error
+      Kp_x: 4.0
+      Ki_x: 0.1
+      Kd_x: 4.0
+
+      Kp_y: 4.0
+      Ki_y: 0.1
+      Kd_y: 4.0
+
+      # Z stiffer for altitude hold
+      Kp_z: 8.0
+      Ki_z: 2.0
+      Kd_z: 2.0
+
+      # Inner loop — Attitude PID
+      # Physics-based: Kp = Ixx * wn^2 = 16.57e-6 * 11.43^2 = 0.002164
+      # Kd = Ixx * 2 * 0.7 * wn = 0.000265
+      # Scale up slightly for simulation (Gazebo has more damping than reality)
+      Kp_phi:    0.004
+      Ki_phi:    0.0001
+      Kd_phi:    0.0006
+
+      Kp_theta:  0.004
+      Ki_theta:  0.0001
+      Kd_theta:  0.0006
+
+      Kp_psi:    0.002
+      Ki_psi:    0.00005
+      Kd_psi:    0.0005
+
+    figure8:
+      amplitude: 0.5
+      omega_x:   0.4
+      omega_y:   0.8
+      z_const:   0.5
+      psi_des:   0.0

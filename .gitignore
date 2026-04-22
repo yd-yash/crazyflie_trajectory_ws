@@ -1,0 +1,66 @@
+# =============================================================================
+# Crazyflie Control Workspace — .gitignore
+# =============================================================================
+
+# ROS2 build artifacts (auto-generated, never commit these)
+build/
+install/
+log/
+
+# Python virtual environment (too large, recreated by setup script)
+cf_control_venv/
+
+# External packages (cloned by setup_dependencies.sh, not part of our code)
+src/crazyswarm2/
+src/motion_capture_tracking/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Logs and plots (generated at runtime)
+logs/*.png
+logs/*.csv
+logs/*.log
+
+# Keep the logs directory but not its contents
+!logs/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# colcon ignore file (generated locally)
+cf_control_venv/COLCON_IGNORE
+
+# Build artifacts from C++ compilation
+*.so
+*.o
+*.a
+
+# Version backup files (kept locally, not tracked in git)
+*_v1.py
+*_v2.py
+*_v3.py
+*_v1.yaml
+*_v2.yaml
+*_v3.yaml
+
+# Binary documents
+*.docx
+*.pdf
+
+# Claude chat exports
+*claude-chat*.md
+
+# Duplicate plugin location
+src/crazyflie_gazebo_sim/include/

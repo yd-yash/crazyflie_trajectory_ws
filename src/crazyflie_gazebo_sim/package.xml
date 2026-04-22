@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>crazyflie_gazebo_sim</name>
+  <version>0.1.0</version>
+  <description>
+    Gazebo Classic 11 simulation environment for Crazyflie 2.1.
+    Part of the Sim-to-Real Pipeline for Quadrotor Trajectory Tracking project.
+  </description>
+  <maintainer email="your@email.com">Yashu</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclpy</depend>
+  <depend>rclcpp</depend>
+  <depend>gazebo_ros</depend>
+  <depend>gazebo_plugins</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>xacro</depend>
+  <depend>crazyflie_interfaces</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

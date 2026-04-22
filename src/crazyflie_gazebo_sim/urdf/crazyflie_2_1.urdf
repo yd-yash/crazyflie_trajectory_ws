@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!--
+  Crazyflie 2.1 URDF for Robot State Publisher / TF2
+  Used for RViz visualization and TF frame broadcasting.
+  Physical parameters match model.sdf exactly.
+-->
+<robot name="crazyflie_2_1">
+
+  <!-- Base link (body frame) -->
+  <link name="base_link">
+    <inertial>
+      <mass value="0.034"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="16.571710e-6" ixy="0" ixz="0"
+               iyy="16.655602e-6" iyz="0"
+               izz="29.261652e-6"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://crazyflie_gazebo_sim/models/crazyflie_2_1/meshes/cf2_assembly_with_props.dae"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.092 0.092 0.029"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Rotor 1: Front-Left, CCW (positive Z spin) -->
+  <link name="rotor_1">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="9.75e-7" ixy="0" ixz="0"
+               iyy="4.17e-5" iyz="0" izz="4.26e-5"/>
+    </inertial>
+    <visual>
+      <geometry><cylinder length="0.005" radius="0.023"/></geometry>
+      <material name="rotor_dark"><color rgba="0.1 0.1 0.1 1"/></material>
+    </visual>
+  </link>
+  <joint name="rotor_1_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="rotor_1"/>
+    <origin xyz="0.03253 0.03253 0.016" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- Rotor 2: Front-Right, CW (negative Z spin) -->
+  <link name="rotor_2">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="9.75e-7" ixy="0" ixz="0"
+               iyy="4.17e-5" iyz="0" izz="4.26e-5"/>
+    </inertial>
+    <visual>
+      <geometry><cylinder length="0.005" radius="0.023"/></geometry>
+      <material name="rotor_dark"><color rgba="0.1 0.1 0.1 1"/></material>
+    </visual>
+  </link>
+  <joint name="rotor_2_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="rotor_2"/>
+    <origin xyz="-0.03253 0.03253 0.016" rpy="0 0 0"/>
+    <axis xyz="0 0 -1"/>
+  </joint>
+
+  <!-- Rotor 3: Rear-Right, CW (negative Z spin) -->
+  <link name="rotor_3">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="9.75e-7" ixy="0" ixz="0"
+               iyy="4.17e-5" iyz="0" izz="4.26e-5"/>
+    </inertial>
+    <visual>
+      <geometry><cylinder length="0.005" radius="0.023"/></geometry>
+      <material name="rotor_dark"><color rgba="0.1 0.1 0.1 1"/></material>
+    </visual>
+  </link>
+  <joint name="rotor_3_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="rotor_3"/>
+    <origin xyz="-0.03253 -0.03253 0.016" rpy="0 0 0"/>
+    <axis xyz="0 0 -1"/>
+  </joint>
+
+  <!-- Rotor 4: Rear-Left, CCW (positive Z spin) -->
+  <link name="rotor_4">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="9.75e-7" ixy="0" ixz="0"
+               iyy="4.17e-5" iyz="0" izz="4.26e-5"/>
+    </inertial>
+    <visual>
+      <geometry><cylinder length="0.005" radius="0.023"/></geometry>
+      <material name="rotor_dark"><color rgba="0.1 0.1 0.1 1"/></material>
+    </visual>
+  </link>
+  <joint name="rotor_4_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="rotor_4"/>
+    <origin xyz="0.03253 -0.03253 0.016" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+</robot>

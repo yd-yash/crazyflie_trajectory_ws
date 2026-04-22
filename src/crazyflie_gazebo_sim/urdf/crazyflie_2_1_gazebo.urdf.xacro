@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<!--
+  Crazyflie 2.1 URDF/Xacro for ROS2 + Gazebo Classic 11
+  =======================================================
+  Used by robot_state_publisher for TF2 transforms.
+  Physical parameters from IMRCLab/crazyswarm2.
+
+  Usage:
+    xacro crazyflie_2_1_gazebo.urdf.xacro robot_name:=cf1 > cf1.urdf
+-->
+<robot name="crazyflie_2_1" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ===================== PARAMETERS ===================== -->
+  <xacro:arg name="robot_name" default="cf1"/>
+  <xacro:arg name="initial_x"  default="0.0"/>
+  <xacro:arg name="initial_y"  default="0.0"/>
+  <xacro:arg name="initial_z"  default="0.0"/>
+
+  <xacro:property name="robot_ns"   value="$(arg robot_name)"/>
+  <xacro:property name="mass"       value="0.034"/>         <!-- kg -->
+  <xacro:property name="arm"        value="0.046"/>         <!-- m -->
+  <xacro:property name="rotor_offset_z" value="0.012"/>     <!-- m -->
+  <xacro:property name="ixx"        value="16.571710e-6"/>  <!-- kg.m^2 -->
+  <xacro:property name="iyy"        value="16.655602e-6"/>  <!-- kg.m^2 -->
+  <xacro:property name="izz"        value="29.261652e-6"/>  <!-- kg.m^2 -->
+  <xacro:property name="rotor_mass" value="0.001"/>         <!-- kg -->
+
+  <!-- ===================== BASE LINK ===================== -->
+  <link name="${robot_ns}/cf_base_link">
+    <inertial>
+      <mass value="${mass}"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia
+        ixx="${ixx}" ixy="0.0" ixz="0.0"
+        iyy="${iyy}" iyz="0.0"
+        izz="${izz}"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://crazyflie_gazebo_sim/models/crazyflie_2_1/meshes/cf2_assembly_with_props.dae"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.092 0.092 0.029"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ===================== ROTOR MACRO ===================== -->
+  <xacro:macro name="cf_rotor_link"
+               params="rotor_id pos_x pos_y pos_z spin_dir">
+    <link name="${robot_ns}/cf_rotor_${rotor_id}">
+      <inertial>
+        <mass value="${rotor_mass}"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia
+          ixx="9.75e-7" ixy="0" ixz="0"
+          iyy="9.75e-7" iyz="0"
+          izz="1.66704e-6"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.023" length="0.001"/>
+        </geometry>
+        <material name="cf_rotor_material">
+          <color rgba="0.15 0.15 0.15 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.023" length="0.001"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${robot_ns}/cf_rotor_${rotor_id}_joint" type="continuous">
+      <parent link="${robot_ns}/cf_base_link"/>
+      <child  link="${robot_ns}/cf_rotor_${rotor_id}"/>
+      <origin xyz="${pos_x} ${pos_y} ${pos_z}" rpy="0 0 0"/>
+      <axis xyz="0 0 ${spin_dir}"/>
+      <dynamics damping="0.004" friction="0.0"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- ===================== ROTOR INSTANCES ===================== -->
+  <!-- arm/sqrt(2) = 0.046/1.4142 = 0.03254 m -->
+  <!-- M1: Front-Left  CCW (+z) -->
+  <xacro:cf_rotor_link rotor_id="m1"
+    pos_x=" 0.03254" pos_y=" 0.03254" pos_z="${rotor_offset_z}" spin_dir="1"/>
+  <!-- M2: Front-Right CW  (-z) -->
+  <xacro:cf_rotor_link rotor_id="m2"
+    pos_x=" 0.03254" pos_y="-0.03254" pos_z="${rotor_offset_z}" spin_dir="-1"/>
+  <!-- M3: Rear-Right  CCW (+z) -->
+  <xacro:cf_rotor_link rotor_id="m3"
+    pos_x="-0.03254" pos_y="-0.03254" pos_z="${rotor_offset_z}" spin_dir="1"/>
+  <!-- M4: Rear-Left   CW  (-z) -->
+  <xacro:cf_rotor_link rotor_id="m4"
+    pos_x="-0.03254" pos_y=" 0.03254" pos_z="${rotor_offset_z}" spin_dir="-1"/>
+
+</robot>

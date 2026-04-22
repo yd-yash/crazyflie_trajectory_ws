@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="crazyflie_2_1">
+
+    <static>false</static>
+    <pose>0 0 0.015 0 0 0</pose>
+
+    <link name="cf_base_link">
+      <pose>0 0 0 0 0 0</pose>
+
+      <inertial>
+        <mass>0.034</mass>
+        <inertia>
+          <ixx>16.571710e-6</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>16.655602e-6</iyy>
+          <iyz>0.0</iyz>
+          <izz>29.261652e-6</izz>
+        </inertia>
+      </inertial>
+
+      <visual name="cf_body_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://crazyflie_2_1/meshes/cf2_assembly_with_props.dae</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <collision name="cf_body_collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box><size>0.092 0.092 0.029</size></box>
+        </geometry>
+      </collision>
+
+      <sensor name="cf_imu_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>500</update_rate>
+        <imu>
+          <angular_velocity>
+            <x><noise type="gaussian"><mean>0.0</mean><stddev>0.00018665</stddev></noise></x>
+            <y><noise type="gaussian"><mean>0.0</mean><stddev>0.00018665</stddev></noise></y>
+            <z><noise type="gaussian"><mean>0.0</mean><stddev>0.00018665</stddev></noise></z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x><noise type="gaussian"><mean>0.0</mean><stddev>0.00186</stddev></noise></x>
+            <y><noise type="gaussian"><mean>0.0</mean><stddev>0.00186</stddev></noise></y>
+            <z><noise type="gaussian"><mean>0.0</mean><stddev>0.00186</stddev></noise></z>
+          </linear_acceleration>
+        </imu>
+        <plugin name="cf_imu_plugin" filename="libgazebo_ros_imu_sensor.so">
+          <ros>
+            <namespace>/cf1</namespace>
+            <remapping>~/out:=imu</remapping>
+          </ros>
+          <initial_orientation_as_reference>false</initial_orientation_as_reference>
+        </plugin>
+      </sensor>
+
+    </link>
+
+    <!-- Motor 1: Front-Left (CCW) -->
+    <link name="cf_rotor_m1">
+      <pose>0.03254 0.03254 0.012 0 0 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia>
+          <ixx>9.75e-7</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>9.75e-7</iyy><iyz>0</iyz>
+          <izz>1.66704e-6</izz>
+        </inertia>
+      </inertial>
+      <visual name="cf_rotor_m1_visual">
+        <geometry><cylinder><radius>0.023</radius><length>0.001</length></cylinder></geometry>
+      </visual>
+      <collision name="cf_rotor_m1_collision">
+        <geometry><cylinder><radius>0.023</radius><length>0.001</length></cylinder></geometry>
+      </collision>
+    </link>
+
+    <!-- Motor 2: Front-Right (CW) -->
+    <link name="cf_rotor_m2">
+      <pose>0.03254 -0.03254 0.012 0 0 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia>
+          <ixx>9.75e-7</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>9.75e-7</iyy><iyz>0</iyz>
+          <izz>1.66704e-6</izz>
+        </inertia>
+      </inertial>
+      <visual name="cf_rotor_m2_visual">
+        <geometry><cylinder><radius>0.023</radius><length>0.001</length></cylinder></geometry>
+      </visual>
+      <collision name="cf_rotor_m2_collision">
+        <geometry><cylinder><radius>0.023</radius><length>0.001</length></cylinder></geometry>
+      </collision>
+    </link>
+
+    <!-- Motor 3: Rear-Right (CCW) -->
+    <link name="cf_rotor_m3">
+      <pose>-0.03254 -0.03254 0.012 0 0 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia>
+          <ixx>9.75e-7</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>9.75e-7</iyy><iyz>0</iyz>
+          <izz>1.66704e-6</izz>
+        </inertia>
+      </inertial>
+      <visual name="cf_rotor_m3_visual">
+        <geometry><cylinder><radius>0.023</radius><length>0.001</length></cylinder></geometry>
+      </visual>
+      <collision name="cf_rotor_m3_collision">
+        <geometry><cylinder><radius>0.023</radius><length>0.001</length></cylinder></geometry>
+      </collision>
+    </link>
+
+    <!-- Motor 4: Rear-Left (CW) -->
+    <link name="cf_rotor_m4">
+      <pose>-0.03254 0.03254 0.012 0 0 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia>
+          <ixx>9.75e-7</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>9.75e-7</iyy><iyz>0</iyz>
+          <izz>1.66704e-6</izz>
+        </inertia>
+      </inertial>
+      <visual name="cf_rotor_m4_visual">
+        <geometry><cylinder><radius>0.023</radius><length>0.001</length></cylinder></geometry>
+      </visual>
+      <collision name="cf_rotor_m4_collision">
+        <geometry><cylinder><radius>0.023</radius><length>0.001</length></cylinder></geometry>
+      </collision>
+    </link>
+
+    <joint name="cf_rotor_m1_joint" type="revolute">
+      <parent>cf_base_link</parent>
+      <child>cf_rotor_m1</child>
+      <axis><xyz>0 0 1</xyz><limit><lower>-1e+16</lower><upper>1e+16</upper></limit></axis>
+    </joint>
+
+    <joint name="cf_rotor_m2_joint" type="revolute">
+      <parent>cf_base_link</parent>
+      <child>cf_rotor_m2</child>
+      <axis><xyz>0 0 -1</xyz><limit><lower>-1e+16</lower><upper>1e+16</upper></limit></axis>
+    </joint>
+
+    <joint name="cf_rotor_m3_joint" type="revolute">
+      <parent>cf_base_link</parent>
+      <child>cf_rotor_m3</child>
+      <axis><xyz>0 0 1</xyz><limit><lower>-1e+16</lower><upper>1e+16</upper></limit></axis>
+    </joint>
+
+    <joint name="cf_rotor_m4_joint" type="revolute">
+      <parent>cf_base_link</parent>
+      <child>cf_rotor_m4</child>
+      <axis><xyz>0 0 -1</xyz><limit><lower>-1e+16</lower><upper>1e+16</upper></limit></axis>
+    </joint>
+
+    <!-- Ground truth odometry plugin -->
+    <plugin name="cf_ground_truth_plugin" filename="libgazebo_ros_p3d.so">
+      <ros>
+        <namespace>/cf1</namespace>
+        <remapping>odom:=ground_truth/odom</remapping>
+      </ros>
+      <body_name>cf_base_link</body_name>
+      <frame_name>world</frame_name>
+      <update_rate>100.0</update_rate>
+      <xyz_offset>0 0 0</xyz_offset>
+      <rpy_offset>0 0 0</rpy_offset>
+      <gaussian_noise>0.0</gaussian_noise>
+    </plugin>
+
+    <!-- Motor force/torque plugin -->
+    <plugin name="cf_motor_plugin" filename="libcf_motor_plugin.so">
+    </plugin>
+
+  </model>
+</sdf>
