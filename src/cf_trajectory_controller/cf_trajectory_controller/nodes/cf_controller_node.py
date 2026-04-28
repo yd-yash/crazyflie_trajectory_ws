@@ -36,6 +36,7 @@ from cf_trajectory_controller.core.cf21_parameters import (
 
 # --- Controller imports ---
 from cf_trajectory_controller.controllers.cascaded_pid import CascadedPID
+from cf_trajectory_controller.controllers.conventional_smc import ConventionalSMC
 
 # --- Trajectory imports ---
 from cf_trajectory_controller.trajectories.figure8_trajectory import Figure8Trajectory
@@ -44,6 +45,7 @@ from cf_trajectory_controller.trajectories.figure8_trajectory import Figure8Traj
 # Registry — add new controllers here when implemented
 CONTROLLER_REGISTRY = {
     'cascaded_pid': CascadedPID,
+    'conventional_smc': ConventionalSMC,
 }
 
 # Registry — add new trajectories here
@@ -86,7 +88,7 @@ class CrazyflieControllerNode(Node):
                 f'Available: {list(CONTROLLER_REGISTRY.keys())}')
             raise ValueError(f'Unknown controller: {controller_name}')
 
-        self.controller = CONTROLLER_REGISTRY[controller_name](controller_params)
+        self.controller = CONTROLLER_REGISTRY[controller_name](controller_params, self.dt)
         self.get_logger().info(
             f'Loaded controller: {self.controller.get_controller_name()}')
 
@@ -144,14 +146,50 @@ class CrazyflieControllerNode(Node):
     # PARAMETER LOADING
     # =========================================================================
 
+    # def _load_controller_params(self, controller_name: str) -> dict:
+    #     """
+    #     Load controller gains from ROS2 parameters.
+    #     Parameters are namespaced under controller_name in the YAML file.
+    #     Falls back to defaults in the controller class if not set.
+    #     """
+    #     params = {}
+    #     gain_names = [
+    #         'Kp_x',     'Ki_x',     'Kd_x',
+    #         'Kp_y',     'Ki_y',     'Kd_y',
+    #         'Kp_z',     'Ki_z',     'Kd_z',
+    #         'Kp_phi',   'Ki_phi',   'Kd_phi',
+    #         'Kp_theta', 'Ki_theta', 'Kd_theta',
+    #         'Kp_psi',   'Ki_psi',   'Kd_psi',
+    #     ]
+    #     for gain in gain_names:
+    #         full_name = f'{controller_name}.{gain}'
+    #         self.declare_parameter(full_name, 0.0)
+    #         val = self.get_parameter(full_name).value
+    #         if val != 0.0:
+    #             params[gain] = val
+    #     self.get_logger().info(
+    #         f'Loaded {len(params)} gains for {controller_name} from params')
+    #     return params
+
     def _load_controller_params(self, controller_name: str) -> dict:
-        """
-        Load controller gains from ROS2 parameters.
-        Parameters are namespaced under controller_name in the YAML file.
-        Falls back to defaults in the controller class if not set.
-        """
-        params = {}
-        gain_names = [
+        from cf_trajectory_controller.core.cf21_parameters import (
+            MASS, GRAVITY, IXX, IYY, IZZ,       # ← uppercase, matches cf21_parameters.py
+            U1_MAX, U2_MAX, U3_MAX, U4_MAX,
+        )
+
+        params = {
+            'mass': MASS,
+            'g':    GRAVITY,
+            'Ixx':  IXX,        # SMC controller uses lowercase keys internally
+            'Iyy':  IYY,
+            'Izz':  IZZ,
+            'U1_MAX': U1_MAX,
+            'U2_MAX': U2_MAX,
+            'U3_MAX': U3_MAX,
+            'U4_MAX': U4_MAX,
+        }
+
+        PID_GAINS = [
             'Kp_x',     'Ki_x',     'Kd_x',
             'Kp_y',     'Ki_y',     'Kd_y',
             'Kp_z',     'Ki_z',     'Kd_z',
@@ -159,15 +197,42 @@ class CrazyflieControllerNode(Node):
             'Kp_theta', 'Ki_theta', 'Kd_theta',
             'Kp_psi',   'Ki_psi',   'Kd_psi',
         ]
+
+        SMC_GAINS = [
+            'c_z',  'ks_z',  'kl_z',
+            'c_x',  'ks_x',  'kl_x',
+            'c_y',  'ks_y',  'kl_y',
+            'c_phi',   'ks_phi',   'kl_phi',
+            'c_theta', 'ks_theta', 'kl_theta',
+            'c_psi',   'ks_psi',   'kl_psi',
+            'sat_bl',
+        ]
+
+        GAIN_MAP = {
+            'cascaded_pid':     PID_GAINS,
+            'conventional_smc': SMC_GAINS,
+        }
+
+        gain_names = GAIN_MAP.get(controller_name, [])
+        smc_subdict = {}
+
         for gain in gain_names:
             full_name = f'{controller_name}.{gain}'
-            self.declare_parameter(full_name, 0.0)
+            self.declare_parameter(full_name, -9999.0)
             val = self.get_parameter(full_name).value
-            if val != 0.0:
-                params[gain] = val
+            if val != -9999.0:
+                if controller_name == 'cascaded_pid':
+                    params[gain] = val
+                else:
+                    smc_subdict[gain] = val
+
+        if controller_name == 'conventional_smc' and smc_subdict:
+            params['conventional_smc'] = smc_subdict
+
         self.get_logger().info(
-            f'Loaded {len(params)} gains for {controller_name} from params')
+            f'Loaded {len(gain_names)} gains for {controller_name} from params')
         return params
+        
 
     def _load_trajectory_params(self, trajectory_name: str) -> dict:
         """

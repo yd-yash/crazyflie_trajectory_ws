@@ -1,7 +1,8 @@
 cf_controller_node:
   ros__parameters:
 
-    active_controller: "cascaded_pid"
+    # active_controller: "cascaded_pid"
+    active_controller: "conventional_smc"
     active_trajectory: "figure8"
     control_frequency: 100.0
 
@@ -36,6 +37,34 @@ cf_controller_node:
       Kp_psi:    0.002
       Ki_psi:    0.00005
       Kd_psi:    0.0005
+
+    conventional_smc:
+      # Altitude
+      c_z: 6.0      # was 3.0 — faster surface convergence
+      ks_z: 8.0     # was 2.0 — stronger reaching
+      kl_z: 4.0     # was 1.0 — stronger linear term
+      # X position
+      c_x: 2.0
+      ks_x: 1.5
+      kl_x: 0.5
+      # Y position
+      c_y: 3.0
+      ks_y: 2.5
+      kl_y: 0.5
+      # Roll
+      c_phi: 5.0
+      ks_phi: 1.0
+      kl_phi: 0.0
+      # Pitch
+      c_theta: 5.0
+      ks_theta: 1.0
+      kl_theta: 0.0
+      # Yaw
+      c_psi: 3.0
+      ks_psi: 0.05
+      kl_psi: 2.0
+      # Boundary layer — wider = less chattering, more smoothing
+      sat_bl: 1.0
 
     figure8:
       amplitude: 0.5
