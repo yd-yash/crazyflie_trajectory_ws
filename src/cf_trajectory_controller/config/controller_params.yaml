@@ -3,7 +3,8 @@ cf_controller_node:
 
     # active_controller: "cascaded_pid"
     # active_controller: "conventional_smc"
-    active_controller: "super_twisting_smc"
+    # active_controller: "super_twisting_smc"
+    active_controller: "nstt_smc"
 
     active_trajectory: "figure8"
     control_frequency: 100.0
@@ -97,6 +98,39 @@ cf_controller_node:
       k2_x: 0.3
       k1_y: 1.5
       k2_y: 0.4
+
+    nstt_smc:
+      # Terminal exponent: gamma = p_exp / q_exp = 5/3 ≈ 1.667
+      p_exp: 5
+      q_exp: 3
+      # Surface shape per channel
+      beta_z: 3.0
+      beta_phi: 3.0
+      beta_theta: 2.0
+      beta_psi: 1.0
+      beta_x: 2.0
+      beta_y: 2.0
+      # Singularity protection
+      mu_min: 0.05
+      # Low-pass filter coefficients for phi/theta cmd derivatives
+      alpha_f_phi: 0.5
+      alpha_f_theta: 0.5
+      # XY velocity/accel reference scaling
+      kpx: 0.9
+      kpy: 0.85
+      kdx: 0.58
+      kdy: 0.60
+      # Super-twisting gains
+      k1_z: 3.0
+      k2_z: 2.5
+      k1_att: 2.6
+      k2_att: 2.0
+      k1_psi: 0.5
+      k2_psi: 0.6
+      k1_x: 0.45
+      k2_x: 0.42
+      k1_y: 0.35
+      k2_y: 0.40
 
     figure8:
       amplitude: 0.5

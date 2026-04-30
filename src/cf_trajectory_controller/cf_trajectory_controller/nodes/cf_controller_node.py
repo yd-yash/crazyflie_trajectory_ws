@@ -19,6 +19,7 @@ Publications:
 Control loop: Timer at control_frequency Hz
 """
 
+from fastapi import params
 import rclpy
 from rclpy.node import Node
 
@@ -38,6 +39,7 @@ from cf_trajectory_controller.core.cf21_parameters import (
 from cf_trajectory_controller.controllers.cascaded_pid import CascadedPID
 from cf_trajectory_controller.controllers.conventional_smc import ConventionalSMC
 from cf_trajectory_controller.controllers.super_twisting_smc import SuperTwistingSMC
+from cf_trajectory_controller.controllers.nstt_smc import NSTTSlidingModeController
 
 # --- Trajectory imports ---
 from cf_trajectory_controller.trajectories.figure8_trajectory import Figure8Trajectory
@@ -48,6 +50,7 @@ CONTROLLER_REGISTRY = {
     'cascaded_pid': CascadedPID,
     'conventional_smc': ConventionalSMC,
     'super_twisting_smc': SuperTwistingSMC,
+    'nstt_smc': NSTTSlidingModeController,
 }
 
 # Registry — add new trajectories here
@@ -221,10 +224,24 @@ class CrazyflieControllerNode(Node):
             'k1_y', 'k2_y',
         ]
 
+        NSTT_SMC_GAINS = [
+            'p_exp', 'q_exp',
+            'beta_z', 'beta_phi', 'beta_theta', 'beta_psi', 'beta_x', 'beta_y',
+            'mu_min',
+            'alpha_f_phi', 'alpha_f_theta',
+            'kpx', 'kpy', 'kdx', 'kdy',
+            'k1_z',  'k2_z',
+            'k1_att','k2_att',
+            'k1_psi','k2_psi',
+            'k1_x',  'k2_x',
+            'k1_y',  'k2_y',
+        ]
+
         GAIN_MAP = {
             'cascaded_pid':       PID_GAINS,
             'conventional_smc':   SMC_GAINS,
             'super_twisting_smc': ST_SMC_GAINS,   # ← add this line
+            'nstt_smc':           NSTT_SMC_GAINS,   # ← add this line
         }
 
 
@@ -243,9 +260,9 @@ class CrazyflieControllerNode(Node):
 
         # if controller_name == 'conventional_smc' and smc_subdict:
         #     params['conventional_smc'] = smc_subdict
-                if controller_name in ('conventional_smc', 'super_twisting_smc') and smc_subdict:
+                if controller_name in ('conventional_smc', 'super_twisting_smc', 'nstt_smc') and smc_subdict:
                     params[controller_name] = smc_subdict
-
+    
         self.get_logger().info(
             f'Loaded {len(gain_names)} gains for {controller_name} from params')
         return params
