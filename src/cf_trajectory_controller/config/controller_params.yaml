@@ -2,7 +2,9 @@ cf_controller_node:
   ros__parameters:
 
     # active_controller: "cascaded_pid"
-    active_controller: "conventional_smc"
+    # active_controller: "conventional_smc"
+    active_controller: "super_twisting_smc"
+
     active_trajectory: "figure8"
     control_frequency: 100.0
 
@@ -65,6 +67,36 @@ cf_controller_node:
       kl_psi: 2.0
       # Boundary layer — wider = less chattering, more smoothing
       sat_bl: 1.0
+
+    super_twisting_smc:
+      # Altitude surface coefficients
+      kpz: 6.0
+      kdz: 0.0
+      kiz: 0.0
+      # XY velocity/accel reference scaling
+      kpx: 2.0
+      kpy: 3.0
+      kdx: 0.0
+      kdy: 0.0
+      # X surface coefficients
+      kp_x: 2.0
+      kd_x: 0.0
+      ki_x: 0.0
+      # Y surface coefficients
+      kp_y: 3.0
+      kd_y: 0.0
+      ki_y: 0.0
+      # Attitude surface coefficients (shared φ, θ, ψ)
+      kp: 5.0
+      kd: 0.0
+      ki: 0.0
+      # Super-twisting gains
+      k1: 4.0
+      k2: 1.5
+      k1_x: 1.0
+      k2_x: 0.3
+      k1_y: 1.5
+      k2_y: 0.4
 
     figure8:
       amplitude: 0.5
