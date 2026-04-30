@@ -58,7 +58,8 @@ class CrazyflieTrajectoryPlotter(Node):
         self.declare_parameter('record_duration', 30.0)
         self.declare_parameter('save_path',
             os.path.expanduser('~/crazyflie_control_ws/logs/'))
-        self.declare_parameter('controller_name', 'cascaded_pid')
+        # self.declare_parameter('controller_name', 'conventional_smc')
+        self.declare_parameter('controller_name', 'super_twisting_smc')
         self.declare_parameter('trajectory_name', 'figure8')
 
         self.record_duration = self.get_parameter('record_duration').value

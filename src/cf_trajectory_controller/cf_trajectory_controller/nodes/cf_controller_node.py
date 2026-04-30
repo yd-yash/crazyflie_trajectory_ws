@@ -37,6 +37,7 @@ from cf_trajectory_controller.core.cf21_parameters import (
 # --- Controller imports ---
 from cf_trajectory_controller.controllers.cascaded_pid import CascadedPID
 from cf_trajectory_controller.controllers.conventional_smc import ConventionalSMC
+from cf_trajectory_controller.controllers.super_twisting_smc import SuperTwistingSMC
 
 # --- Trajectory imports ---
 from cf_trajectory_controller.trajectories.figure8_trajectory import Figure8Trajectory
@@ -46,6 +47,7 @@ from cf_trajectory_controller.trajectories.figure8_trajectory import Figure8Traj
 CONTROLLER_REGISTRY = {
     'cascaded_pid': CascadedPID,
     'conventional_smc': ConventionalSMC,
+    'super_twisting_smc': SuperTwistingSMC,
 }
 
 # Registry — add new trajectories here
@@ -208,10 +210,23 @@ class CrazyflieControllerNode(Node):
             'sat_bl',
         ]
 
+        ST_SMC_GAINS = [
+            'kpz', 'kdz', 'kiz',
+            'kpx', 'kpy', 'kdx', 'kdy',
+            'kp_x', 'kd_x', 'ki_x',
+            'kp_y', 'kd_y', 'ki_y',
+            'kp', 'kd', 'ki',
+            'k1', 'k2',
+            'k1_x', 'k2_x',
+            'k1_y', 'k2_y',
+        ]
+
         GAIN_MAP = {
-            'cascaded_pid':     PID_GAINS,
-            'conventional_smc': SMC_GAINS,
+            'cascaded_pid':       PID_GAINS,
+            'conventional_smc':   SMC_GAINS,
+            'super_twisting_smc': ST_SMC_GAINS,   # ← add this line
         }
+
 
         gain_names = GAIN_MAP.get(controller_name, [])
         smc_subdict = {}
@@ -226,8 +241,10 @@ class CrazyflieControllerNode(Node):
                 else:
                     smc_subdict[gain] = val
 
-        if controller_name == 'conventional_smc' and smc_subdict:
-            params['conventional_smc'] = smc_subdict
+        # if controller_name == 'conventional_smc' and smc_subdict:
+        #     params['conventional_smc'] = smc_subdict
+                if controller_name in ('conventional_smc', 'super_twisting_smc') and smc_subdict:
+                    params[controller_name] = smc_subdict
 
         self.get_logger().info(
             f'Loaded {len(gain_names)} gains for {controller_name} from params')
