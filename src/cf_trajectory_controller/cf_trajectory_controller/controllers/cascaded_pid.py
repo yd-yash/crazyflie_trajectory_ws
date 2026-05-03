@@ -48,7 +48,7 @@ class CascadedPID(BaseController):
     Inner loop: attitude → torques
     """
 
-    def __init__(self, params: dict):
+    def __init__(self, params: dict, dt: float):
         super().__init__(params)
 
         # --- Outer loop gains (position) ---

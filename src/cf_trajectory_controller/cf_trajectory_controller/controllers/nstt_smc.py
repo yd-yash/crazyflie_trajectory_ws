@@ -256,17 +256,32 @@ class NSTTSlidingModeController(BaseController):
 
     # -----------------------------------------------------------------------
 
+    # def _protected_ntsm_term(self, e_dot: float,
+    #                           beta: float, gamma: float) -> float:
+    #     """
+    #     Nonsingular terminal term with singularity protection.
+    #     When |ė| < mu_min and (2-gamma) < 0, the term would blow up.
+    #     Clamp |ė| to mu_min before computing.
+    #     """
+    #     e_dot_safe = math.copysign(
+    #         max(abs(e_dot), self.mu_min), e_dot
+    #     ) if abs(e_dot) < self.mu_min else e_dot
+    #     return _ntsm_term(e_dot_safe, beta, gamma)
+
     def _protected_ntsm_term(self, e_dot: float,
-                              beta: float, gamma: float) -> float:
+                          beta: float, gamma: float) -> float:
         """
-        Nonsingular terminal term with singularity protection.
-        When |ė| < mu_min and (2-gamma) < 0, the term would blow up.
-        Clamp |ė| to mu_min before computing.
+        Nonsingular terminal term with singularity AND magnitude protection.
+        Clamps both the input and the output to prevent blow-up at t=0.
         """
-        e_dot_safe = math.copysign(
-            max(abs(e_dot), self.mu_min), e_dot
-        ) if abs(e_dot) < self.mu_min else e_dot
-        return _ntsm_term(e_dot_safe, beta, gamma)
+        # Clamp e_dot magnitude to prevent (beta^gamma * |ė|^(2-gamma)) → ∞
+        e_dot_clamped = max(-5.0, min(5.0, e_dot))
+        # Apply mu_min floor
+        if abs(e_dot_clamped) < self.mu_min:
+            e_dot_clamped = math.copysign(self.mu_min, e_dot_clamped) if e_dot_clamped != 0 else self.mu_min
+        term = _ntsm_term(e_dot_clamped, beta, gamma)
+        # Hard clamp output
+        return max(-20.0, min(20.0, term))
 
     # -----------------------------------------------------------------------
 
@@ -474,7 +489,7 @@ class NSTTSlidingModeController(BaseController):
         s_psi = _ntsm_surface(epsi, epsi_dot, self.beta_psi, gamma)
 
         self.I_u4 += math.copysign(1.0, s_psi) * dt
-        self.I_u4 = max(-50.0, min(50.0, self.I_u4))
+        self.I_u4 = max(-5.0, min(5.0, self.I_u4))
 
         ntsm_psi = self._protected_ntsm_term(epsi_dot, self.beta_psi, gamma)
 
