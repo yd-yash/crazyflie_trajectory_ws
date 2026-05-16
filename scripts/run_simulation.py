@@ -118,39 +118,39 @@ def build_bash_command(ros_command: str) -> str:
     )
 
 # for terminator
-# def launch_in_terminator(title: str, ros_command: str) -> subprocess.Popen:
-#     """
-#     Open a new Terminator window and run the given ROS2 command inside it.
-#     Returns the Popen handle for the Terminator process.
-#     """
-#     bash_cmd = build_bash_command(ros_command)
-#     terminator_cmd = [
-#         "terminator",
-#         "--title", title,
-#         "-e", bash_cmd,
-#     ]
-#     print(f"  Launching: {title}")
-#     print(f"  Command  : {ros_command}")
-#     proc = subprocess.Popen(terminator_cmd)
-#     return proc
-
-# for terminal
 def launch_in_terminator(title: str, ros_command: str) -> subprocess.Popen:
     """
-    Open a new GNOME Terminal window and run the given ROS2 command inside it.
-    Returns the Popen handle for the gnome-terminal process.
+    Open a new Terminator window and run the given ROS2 command inside it.
+    Returns the Popen handle for the Terminator process.
     """
     bash_cmd = build_bash_command(ros_command)
-    gnome_cmd = [
-        "gnome-terminal",
+    terminator_cmd = [
+        "terminator",
         "--title", title,
-        "--",
-        "bash", "-c", bash_cmd,
+        "-e", bash_cmd,
     ]
     print(f"  Launching: {title}")
     print(f"  Command  : {ros_command}")
-    proc = subprocess.Popen(gnome_cmd)
+    proc = subprocess.Popen(terminator_cmd)
     return proc
+
+# for terminal
+# def launch_in_terminator(title: str, ros_command: str) -> subprocess.Popen:
+#     """
+#     Open a new GNOME Terminal window and run the given ROS2 command inside it.
+#     Returns the Popen handle for the gnome-terminal process.
+#     """
+#     bash_cmd = build_bash_command(ros_command)
+#     gnome_cmd = [
+#         "gnome-terminal",
+#         "--title", title,
+#         "--",
+#         "bash", "-c", bash_cmd,
+#     ]
+#     print(f"  Launching: {title}")
+#     print(f"  Command  : {ros_command}")
+#     proc = subprocess.Popen(gnome_cmd)
+#     return proc
 
 
 # ─────────────────────────────────────────────

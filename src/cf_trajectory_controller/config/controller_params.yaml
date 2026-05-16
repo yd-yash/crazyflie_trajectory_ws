@@ -4,7 +4,7 @@ cf_controller_node:
     # active_controller: "cascaded_pid"
     # active_controller: "conventional_smc"
     # active_controller: "super_twisting_smc"
-    active_controller: "super_twisting_smc"
+    active_controller: "cascaded_pid"
 
     active_trajectory: "figure8"
     control_frequency: 100.0
